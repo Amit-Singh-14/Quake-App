@@ -46,7 +46,7 @@ public class CustomAdapter extends ArrayAdapter<Earthquake> {
 
         GradientDrawable magnitudecircle = (GradientDrawable) magnitude.getBackground();
         int magnitudeColor = getMagnitudeColor(earth.getMagnittude());
-        Log.v("EarthQuakeActivity",""+magnitudeColor + " " + earth.getMagnittude() + magnitudecircle);
+//        Log.v("EarthQuakeActivity",""+magnitudeColor + " " + earth.getMagnittude() + magnitudecircle);
 
         magnitudecircle.setColor(magnitudeColor);
 
@@ -66,7 +66,7 @@ public class CustomAdapter extends ArrayAdapter<Earthquake> {
 
         }
 
-        Log.v("EarthquakeActivity",parts[0]+" " + parts[1]);
+//        Log.v("EarthquakeActivity",parts[0]+" " + parts[1]);
         TextView city  = listItemView.findViewById(R.id.primary_location);
         city.setText(parts[1]);
 
@@ -137,7 +137,7 @@ public class CustomAdapter extends ArrayAdapter<Earthquake> {
                 magnitudeColorResourceId = R.color.magnitude10plus;
                 break;
         }
-        Log.v("EarthquakeAcitivity",magnitudeColorResourceId + "");
+//        Log.v("EarthquakeAcitivity",magnitudeColorResourceId + "");
         return ContextCompat.getColor(getContext(), magnitudeColorResourceId);
     }
 }

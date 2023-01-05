@@ -15,20 +15,25 @@
  */
 package com.example.myapplication;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 //import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
+import android.util.Log;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class EarthquakeActivity extends AppCompatActivity {
+public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Earthquake>> {
 
+    private static final int EARTHQUAKE_LOADER_ID = 1;
+    private CustomAdapter customAdapter;
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
-
     public static final String USRG_URL = " https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&limit=20";
 
 
@@ -38,9 +43,14 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
+        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+        customAdapter = new CustomAdapter(
+                this, new ArrayList<Earthquake>());
+        earthquakeListView.setAdapter(customAdapter);
 
-        QuakeAsync quakeAsync = new QuakeAsync();
-        quakeAsync.execute(USRG_URL);
+
+//        QuakeAsync quakeAsync = new QuakeAsync();
+//        quakeAsync.execute(USRG_URL);
 
         // Create a fake list of earthquake locations.
 //        ArrayList<Earthquake> earthquakes = ;
@@ -54,33 +64,57 @@ public class EarthquakeActivity extends AppCompatActivity {
 
         // Find a reference to the {@link ListView} in the layout
 
-
+        LoaderManager loaderManager = getSupportLoaderManager();
+        loaderManager.initLoader(EARTHQUAKE_LOADER_ID,null,this);
     }
 
 
-    private class QuakeAsync extends AsyncTask<String,Void,ArrayList<Earthquake>> {
 
-        @Override
-        protected ArrayList<Earthquake> doInBackground(String... url) {
-            if (url.length < 1 || url[0] == null) {
-                return null;
-            }
-            return QuakeUtils.fetchQuakeData(url[0]);
-        }
+    @NonNull
+    @Override
+    public Loader<List<Earthquake>> onCreateLoader(int id, @Nullable Bundle args) {
+        Log.v(LOG_TAG,"oncreate");
+        return new EarthquakeLoader(this,USRG_URL);
+    }
 
-        @Override
-        protected void onPostExecute(ArrayList<Earthquake> earthquakes) {
 
-            ListView earthquakeListView = (ListView) findViewById(R.id.list);
 
-            // Create a new {@link ArrayAdapter} of earthquakes
-            CustomAdapter adapter = new CustomAdapter(
-                    EarthquakeActivity.this, earthquakes);
+    @Override
+    public void onLoadFinished(@NonNull Loader<List<Earthquake>> loader, List<Earthquake> data) {
+        Log.v(LOG_TAG,""+data);
+        if(data != null && !data.isEmpty()){
+            customAdapter.addAll(data);
 
-            // Set the adapter on the {@link ListView}
-            // so the list can be populated in the user interface
-            earthquakeListView.setAdapter(adapter);
         }
     }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<List<Earthquake>> loader) {
+    customAdapter.clear();
+    }
+
+
+
+
+//
+//    private class QuakeAsync extends AsyncTask<String,Void,List<Earthquake>> {
+//
+//        @Override
+//        protected List<Earthquake> doInBackground(String... url) {
+//            if (url.length < 1 || url[0] == null) {
+//                return null;
+//            }
+//            return QuakeUtils.fetchQuakeData(url[0]);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<Earthquake> earthquakes) {
+//
+//           customAdapter.clear();
+//           if(earthquakes !=null && !earthquakes.isEmpty()){
+//               customAdapter.addAll(earthquakes);
+//           }
+//        }
+//    }
     }
 

@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 public final class QuakeUtils {
 
@@ -37,7 +38,7 @@ public final class QuakeUtils {
 
     }
 
-    public static ArrayList<Earthquake> fetchQuakeData(String requrl){
+    public static List<Earthquake> fetchQuakeData(String requrl){
         URL url = createurl(requrl);
 
         String jsonresponse = null;
@@ -47,8 +48,7 @@ public final class QuakeUtils {
             Log.e(LOG_TAG,"error",e);
         }
 
-        ArrayList<Earthquake> earth = extractEarthquakes(jsonresponse);
-        return earth;
+        return extractEarthquakes(jsonresponse);
     }
 
 
@@ -121,9 +121,9 @@ public final class QuakeUtils {
     }
 
 
-    public static ArrayList<Earthquake> extractEarthquakes(String jsonresponse){
+    public static List<Earthquake> extractEarthquakes(String jsonresponse){
 
-        ArrayList<Earthquake> earthquakes = new ArrayList<>();
+        List<Earthquake> earthquakes = new ArrayList<>();
 
 
         try{
