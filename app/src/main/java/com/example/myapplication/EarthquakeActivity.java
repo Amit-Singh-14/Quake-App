@@ -15,10 +15,15 @@
  */
 package com.example.myapplication;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 //import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,13 +40,16 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private CustomAdapter customAdapter;
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
     public static final String USRG_URL = " https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&limit=20";
-
+    private TextView mEmptyStateTextView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
+
+
+        mEmptyStateTextView = (TextView)findViewById(R.id.emptyview);
 
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
         customAdapter = new CustomAdapter(
@@ -64,8 +72,23 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
         // Find a reference to the {@link ListView} in the layout
 
-        LoaderManager loaderManager = getSupportLoaderManager();
-        loaderManager.initLoader(EARTHQUAKE_LOADER_ID,null,this);
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+
+        if(networkInfo != null && networkInfo.isConnected()){
+            LoaderManager loaderManager = getSupportLoaderManager();
+            loaderManager.initLoader(EARTHQUAKE_LOADER_ID,null,this);
+        }
+        else{
+            View loadingIndicator = findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
+
+            mEmptyStateTextView.setText("no internet connection");
+        }
+
     }
 
 
@@ -81,10 +104,17 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<Earthquake>> loader, List<Earthquake> data) {
-        Log.v(LOG_TAG,""+data);
+//        Log.v(LOG_TAG,""+data);
+
+        View laodingindicator = findViewById(R.id.loading_indicator);
+            laodingindicator.setVisibility(View.GONE);
+
+
+
         if(data != null && !data.isEmpty()){
             customAdapter.addAll(data);
-
+        }else{
+            mEmptyStateTextView.setText("no_earthquake");
         }
     }
 

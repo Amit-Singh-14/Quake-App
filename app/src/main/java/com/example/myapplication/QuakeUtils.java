@@ -53,6 +53,17 @@ public final class QuakeUtils {
 
 
 
+    private static URL createurl(String requrl) {
+
+        URL url = null;
+        try {
+            url = new URL(requrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
 
 
     private static String makeHTTPreq(URL url) {
@@ -106,18 +117,6 @@ public final class QuakeUtils {
         return output.toString();
 
 
-    }
-
-    private static URL createurl(String requrl) {
-
-        URL url = null;
-        try {
-            url = new URL(requrl);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-            return url;
     }
 
 
